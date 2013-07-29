@@ -25,4 +25,7 @@ confirm({
   positive: 'yes',
   negative: 'no',
   query: 'Confirm by typing "yes", abort by typing "no":'
+}, function(err, result) {
+  var ok = !err && result;
+  process.exit(ok ? 0 : 1);
 });

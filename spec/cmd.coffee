@@ -1,14 +1,35 @@
 should = require 'should'
-exec = require('child_process').exec
+spawn = require('child_process').spawn
 
-# should do something like the below, but sending in some real stream input data
 
-# it "should parse json", (done) ->
-#   exec "node bin/confirm.js", (err, stdout, stderr) ->
-#     should.not.exist err
-#     stderr.should.eql ''
-#     stdout.should.eql '''{
-#       "a": 1
-#     }\n
-#     '''
-#     done()
+
+it "should return the status code 1 if 'no' is given", (done) ->
+  confirm = spawn('node', ['bin/confirm.js'])
+
+  confirm.on 'close', (code) ->
+    code.should.eql(1)
+    done()
+
+  confirm.stdin.write('no\n')
+
+
+
+it "should return the status code 0 if 'yes' is given", (done) ->
+  confirm = spawn('node', ['bin/confirm.js'])
+
+  confirm.on 'close', (code) ->
+    code.should.eql(1)
+    done()
+
+  confirm.stdin.write('no\n')
+
+
+
+it "should not return at all if an invalid string is passed in", (done) ->
+  confirm = spawn('node', ['bin/confirm.js'])
+
+  confirm.on 'close', (code) ->
+    should(0, "program closed; should not happen")
+
+  confirm.stdin.write('somethingsomethingdark\n')
+  setTimeout(done, 500)

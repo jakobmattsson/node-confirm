@@ -1,22 +1,21 @@
 read = require 'read'
 
-confirm = ({ stdin, stdout, query, positive, negative }) ->
+setImm = setImmediate || process.nextTick
+
+module.exports = confirm = ({ stdin, stdout, query, positive, negative }, callback) ->
 
   args = arguments
 
   read {
-    stdin: stdin
-    stdout: stdout
+    input: stdin
+    output: stdout
     prompt: query
   }, (err, response) ->
     if err
-      process.stderr.write(err)
-      process.exit(1)
+      callback(err)
     else if response == positive
-      process.exit(0)
+      callback(null, true)
     else if response == negative
-      process.exit(1)
+      callback(null, false)
     else
-      confirm.apply(null, args)
-
-module.exports = confirm
+      setImm -> confirm(args...)
